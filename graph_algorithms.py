@@ -13,6 +13,7 @@ class Algorithms(ABC):
 	def solve():
 		pass
 
+
 class AlgorithmsFactory:
 	@staticmethod
 	def get_algorithm(algorithm_type: AlgorithmType) -> Algorithms:
@@ -26,6 +27,7 @@ class AlgorithmsFactory:
 				return Kruskal()
 			case _:
 				return None
+
 
 class Dijkstra(Algorithms):
 	def __init__(self):
@@ -48,10 +50,6 @@ class Dijkstra(Algorithms):
 	def solve(self, start: int) -> dict:
 		assert self.input is not None and isinstance(start, int)
 		return self._solver.solve(start)
-	
-	@staticmethod
-	def solve_custom_input(graph):
-		print("solving custom input")
 
 
 class BellmanFord(Algorithms):

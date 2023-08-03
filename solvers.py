@@ -33,7 +33,6 @@ class DijkstraSolver(Solver):
 				visited.add(start)
 
 				heap = []
-
 				heapq.heappush(heap, (0, start))
 	
 				while heap:
@@ -48,24 +47,29 @@ class DijkstraSolver(Solver):
 				return shortest_paths
 			case InputType.ADJACENCY_MATRIX:
 				n = len(self.graph)
-				shortest_paths = {i:math.inf for i in range(n)}
+				shortest_paths = {}
+				for node in range(n):
+					shortest_paths[node] = math.inf
 				shortest_paths[start] = 0
+
 				visit = set()
 				visit.add(start)
 
-				heap = [(0, start)]
+				heap = []
+				heapq.heappush(heap, (0, start))
+				
 				while heap:
-					distance, to_node = heapq.heappop(heap)
-					visit.add(to_node)
-					for nxt_node, cost in enumerate(self.graph[to_node]):
-						if cost != 0 and nxt_node not in visit and distance + cost < shortest_paths[nxt_node]:
-							shortest_paths[nxt_node] = distance + cost
-							heapq.heappush(heap, (shortest_paths[nxt_node], nxt_node))
+					distance, node = heapq.heappop(heap)
+					visit.add(node)
+					for to_node, cost in enumerate(self.graph[node]):
+						if cost != 0 and to_node not in visit and distance + cost < shortest_paths[to_node]:
+							shortest_paths[to_node] = distance + cost
+							heapq.heappush(heap, (shortest_paths[to_node], to_node))
 
 				return shortest_paths
 			case _:
 				raise ValueError("Invalid input type")
-			
+
 class BellmanFordSolver(Solver):
 	def __init__(self):
 		self.graph = None
@@ -102,7 +106,7 @@ class BellmanFordSolver(Solver):
 			
 			case InputType.ADJACENCY_MATRIX:
 				n = len(self.graph)
-				shortest_paths = [math.inf] * n
+				shortest_paths = {i:math.inf for i in range(n)}
 				shortest_paths[start] = 0
 
 				for i in range(n-1):
