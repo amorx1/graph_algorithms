@@ -168,7 +168,7 @@ class KruskalSolver(Solver):
 					if uf.find(node1) != uf.find(node2):
 						total_cost += cost
 						uf.union(node1, node2)
-						MST.append((node1, node2, cost)) 
+						MST.append((cost, node1, node2)) 
 
 				print(f"Minimum cost: {total_cost}")
 				return MST
@@ -190,6 +190,83 @@ class KruskalSolver(Solver):
 						MST.append((cost, n1, n2))
 
 				print(f"Minimum cost: {res}")
+				return MST
+			
+			case _:
+				raise ValueError("Invalid input type")
+			
+class PrimsSolver(Solver):
+	def __init__(self):
+		self.graph = None
+		self.input_type = None
+
+	def set_graph(self, graph):
+		self.graph = graph
+
+	def set_input_type(self, input_type):
+		self.input_type = input_type
+		
+	def solve(self, start: int) -> list:
+		assert self.input_type is not None
+		assert self.graph is not None
+		match self.input_type:
+			case InputType.DICTIONARY:
+				seen, unseen = set(), set(list(self.graph.keys()))
+				heap = self.graph[start]
+				heapq.heapify(heap)
+				seen.add(start)
+				unseen.remove(start)
+				MST, total_cost = [], 0
+
+				while unseen:
+					cost, from_node, to_node = heapq.heappop(heap)
+					new_node = None
+
+					if from_node in seen and to_node in unseen:
+						new_node = to_node
+						MST.append((cost, from_node, to_node))
+					elif to_node in seen and from_node in unseen:
+						new_node = from_node
+						MST.append((cost, from_node, to_node))
+
+					if new_node:
+						seen.add(new_node)
+						unseen.remove(new_node)
+						total_cost += cost
+						for nxt in self.graph[new_node]:
+							heapq.heappush(heap, nxt)
+
+				print(total_cost)
+				return MST
+			
+			case InputType.ADJACENCY_MATRIX:
+				seen, unseen = set(), set(list(range(len(self.graph))))
+				heap = [(cost, to, start) for to, cost in enumerate(self.graph[start])]
+				heapq.heapify(heap)
+				seen.add(start)
+				unseen.remove(start)
+				MST, total_cost = [], 0
+
+				while unseen:
+					cost, from_node, to_node = heapq.heappop(heap)
+					new_node = None
+					if from_node in seen and to_node in unseen:
+						new_node = to_node
+						MST.append((cost, from_node, to_node))
+					elif to_node in seen and from_node in unseen:
+						new_node = from_node
+						MST.append((cost, from_node, to_node))
+
+					if new_node:
+						seen.add(new_node)
+						unseen.remove(new_node)
+						total_cost += cost
+
+						for nxt, cost in enumerate(self.graph[new_node]):
+							if cost != 0 and cost != math.inf:
+								heapq.heappush(heap, (cost, nxt, new_node))
+				
+				print(total_cost)
 				return MST
 			
 			case _:

@@ -97,6 +97,34 @@ class KruskalInput(Input):
             	]
 			case _:
 				raise ValueError("Invalid input type")
+			
+class PrimsInput(Input):
+	def __init__(self, input_type):
+		self.input_type = input_type
+	def generate(self) -> list | dict:
+		match self.input_type:
+			case InputType.DICTIONARY:
+				return {
+            		0: [(3, 3, 0), (3, 2, 0), (2, 1, 0)],
+            		1: [(2, 0, 1), (4, 2, 1), (3, 4, 1)],
+            		2: [(3, 0, 2), (5, 3, 2), (1, 4, 2), (4, 1, 2)],
+            		3: [(3, 0, 3), (5, 2, 3), (7, 5, 3)],
+            		4: [(8, 5, 4), (1, 2, 4), (3, 1, 4)],
+            		5: [(9, 6, 5), (8, 4, 5), (7, 3, 5)],
+            		6: [(9, 5, 6)],
+        		}
+			case InputType.ADJACENCY_MATRIX:
+				return [
+                	[0, 2, 3, 3, math.inf, math.inf, math.inf],
+                	[2, 0, 4, math.inf, 3, math.inf, math.inf],
+                	[3, 4, 0, 5, 1, math.inf, math.inf],
+                	[3, math.inf, 5, 0, math.inf, 7, math.inf],
+                	[math.inf, 3, 1, math.inf, 0, 8, math.inf],
+                	[math.inf, math.inf, math.inf, 7, 8, 0, 9],
+                	[math.inf, math.inf, math.inf, math.inf, math.inf, 9, 0]
+            	]
+			case _:
+				raise ValueError("Invalid input type")
 
 class AbstractInputFactory(ABC):
 	@abstractmethod
@@ -124,6 +152,8 @@ class DictionaryInputFactory(AbstractInputFactory):
 				return BellmanFordInput(InputType.DICTIONARY).generate()
 			case AlgorithmType.KRUSKAL:
 				return KruskalInput(InputType.DICTIONARY).generate()
+			case AlgorithmType.PRIMS:
+				return PrimsInput(InputType.DICTIONARY).generate()
 			case _:
 				raise ValueError("Algorithm not supported")
 
@@ -137,6 +167,8 @@ class AdjacencyMatrixInputFactory(AbstractInputFactory):
 				return BellmanFordInput(InputType.ADJACENCY_MATRIX).generate()
 			case AlgorithmType.KRUSKAL:
 				return KruskalInput(InputType.ADJACENCY_MATRIX).generate()
+			case AlgorithmType.PRIMS:
+				return PrimsInput(InputType.ADJACENCY_MATRIX).generate()
 			case _:
 				raise ValueError("Algorithm not supported")
 

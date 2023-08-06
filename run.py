@@ -4,10 +4,10 @@ import input_factory
 from input_factory import InputType, AlgorithmType
 
 def main():
-	k = AlgorithmsFactory.get_algorithm(AlgorithmType.KRUSKAL)
-	k.set_input_type(InputType.DICTIONARY)
-	k.generate_input()
-	print(k.solve(start=0))
+	p = AlgorithmsFactory.get_algorithm(AlgorithmType.PRIMS)
+	p.set_input_type(InputType.ADJACENCY_MATRIX)
+	p.generate_input()
+	print(p.solve(start=0))
 
 if __name__=="__main__":
 	main()

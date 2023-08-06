@@ -5,7 +5,7 @@ from typing_extensions import override
 import input_factory
 from input_factory import AbstractInputFactory, Input, InputFactoryProducer, InputType, AlgorithmType
 import solvers
-from solvers import DijkstraSolver, BellmanFordSolver, KruskalSolver
+from solvers import DijkstraSolver, BellmanFordSolver, KruskalSolver, PrimsSolver
 
 
 class Algorithms(ABC):
@@ -34,6 +34,8 @@ class AlgorithmsFactory:
 				return BellmanFord()
 			case AlgorithmType.KRUSKAL:
 				return Kruskal()
+			case AlgorithmType.PRIMS:
+				return Prims()
 			case _:
 				raise ValueError("Invalid algorithm type")
 
@@ -66,7 +68,6 @@ class Dijkstra(Algorithms):
 	@staticmethod
 	def draw_solution(res):
 		pass
-
 
 
 class BellmanFord(Algorithms):
@@ -114,6 +115,35 @@ class Kruskal(Algorithms):
 	def generate_input(self) -> None:
 		assert isinstance(self.input_type, InputType) and isinstance(self._input_factory, AbstractInputFactory)
 		self.graph = self._input_factory.get_input(AlgorithmType.KRUSKAL)
+		self._solver.set_graph(self.graph)
+
+	def solve(self, start: int) -> list | dict:
+		assert self.graph is not None and isinstance(start, int)
+		return self._solver.solve(start)
+
+	@staticmethod
+	def solve_custom_input(graph):
+		print("solving custom input")
+	
+	@staticmethod
+	def draw_solution(res):
+		pass
+
+class Prims(Algorithms):
+	def __init__(self):
+		self.input: Optional[list | dict] = None
+		self.input_type: Optional[InputType] = None
+		self._input_factory: Optional[AbstractInputFactory] = None
+		self._solver = PrimsSolver()
+
+	def set_input_type(self, input_type: InputType) -> None:
+		self.input_type = input_type
+		self._input_factory = InputFactoryProducer.get_factory(self.input_type)
+		self._solver.set_input_type(self.input_type)
+
+	def generate_input(self) -> None:
+		assert isinstance(self.input_type, InputType) and isinstance(self._input_factory, AbstractInputFactory)
+		self.graph = self._input_factory.get_input(AlgorithmType.PRIMS)
 		self._solver.set_graph(self.graph)
 
 	def solve(self, start: int) -> list | dict:
